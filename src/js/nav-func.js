@@ -1,9 +1,3 @@
-/**
- *  ? when menu item and it's sub element have the same data attribute value
- *  ? put it's value to document selector so the 'menu item click listener' can be used to toggle the sub menu classList
- *
- */
-
 const elementDataAttribute = ({
   elementToGetAttribute,
   dataAttributeValue,
@@ -53,17 +47,96 @@ const arrayOfElements = () => {
   };
 };
 
-const elementsInArray = arrayOfElements();
+const dynamicClassToggler = ({
+  classListValues,
+  elementToAddInArrays,
+  elementsInArray,
+}) => {
+  const addElementInArray = () => elementsInArray.adder(elementToAddInArrays);
+
+  const toggleLastElementClassList = () => {
+    customClassList({
+      classListVal: classListValues,
+      element: elementsInArray.lastGetter(),
+    }).toggleClassList();
+  };
+
+  const toggleSecondLastElementClassList = () => {
+    customClassList({
+      classListVal: classListValues,
+      element: elementsInArray.secondLastGetter(),
+    }).toggleClassList();
+  };
+
+  const toggleThisElementsClassListWithCondition = (
+    classListValue,
+    ClassListValueMatch,
+  ) => {
+    if (
+      classListValue.classList.value === ClassListValueMatch.classList.value
+    ) {
+      toggleLastElementClassList();
+    }
+  };
+
+  const switchToggler =
+    function switchBetweenToggledItemToCurrentThenToggleItWhenToggled(
+      length,
+      lastElement,
+      secondLastElement,
+      classListValue,
+    ) {
+      if (
+        length >= 2 &&
+        lastElement.classList.value === classListValue &&
+        secondLastElement.classList.value === classListValue
+      ) {
+        toggleSecondLastElementClassList();
+
+        toggleThisElementsClassListWithCondition(
+          lastElement,
+          secondLastElement,
+        );
+      }
+    };
+
+  const toggleClass = () => {
+    addElementInArray();
+    toggleLastElementClassList();
+
+    const elementsInArrayLength = elementsInArray.lengthGetter();
+    const lastElemenInArray = elementsInArray.lastGetter();
+    const secondLastElementInArray = elementsInArray.secondLastGetter();
+    const elementToAddClassListValue = elementToAddInArrays.classList.value;
+
+    switchToggler(
+      elementsInArrayLength,
+      lastElemenInArray,
+      secondLastElementInArray,
+      elementToAddClassListValue,
+    );
+  };
+
+  return {
+    toggleClass,
+  };
+};
+
+const subNavInArray = arrayOfElements();
+const navBarTogglerInArray = arrayOfElements();
 
 const dropDown = ({
   elementToListen,
   itsDataAttribute,
   subElement,
   classListValue,
+  togglerClassListValue,
 }) => {
   const dropDownElement = () => {
     elementToListen.forEach((element) => {
-      element.addEventListener('click', () => {
+      element.addEventListener('click', (e) => {
+        e.stopPropagation();
+
         const dataAttributeValue = elementDataAttribute({
           elementToGetAttribute: element,
           dataAttributeValue: itsDataAttribute,
@@ -73,38 +146,19 @@ const dropDown = ({
           `${subElement}="${dataAttributeValue}"]`,
         );
 
-        elementsInArray.adder(subNavItem);
+        subNavItem.addEventListener('click', (e2) => e2.stopPropagation());
 
-        customClassList({
-          classListVal: classListValue,
-          element: elementsInArray.lastGetter(),
-        }).toggleClassList();
+        dynamicClassToggler({
+          classListValues: classListValue,
+          elementToAddInArrays: subNavItem,
+          elementsInArray: subNavInArray,
+        }).toggleClass();
 
-        // click the second menu item to drop up the previous element
-        if (
-          elementsInArray.lengthGetter() >= 2 &&
-          elementsInArray.lastGetter().classList.value ===
-            'nav-sub-item visibility' &&
-          elementsInArray.secondLastGetter().classList.value ===
-            'nav-sub-item visibility'
-        ) {
-          customClassList({
-            classListVal: classListValue,
-            element: elementsInArray.secondLastGetter(),
-          }).toggleClassList();
-
-          // but drop down the element if it was clicked again
-          if (
-            elementsInArray.secondLastGetter().classList.value ===
-              'nav-sub-item' &&
-            elementsInArray.lastGetter().classList.value === 'nav-sub-item'
-          ) {
-            customClassList({
-              classListVal: classListValue,
-              element: elementsInArray.lastGetter(),
-            }).toggleClassList();
-          }
-        }
+        dynamicClassToggler({
+          classListValues: togglerClassListValue,
+          elementToAddInArrays: element,
+          elementsInArray: navBarTogglerInArray,
+        }).toggleClass();
       });
     });
   };
