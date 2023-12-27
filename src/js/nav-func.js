@@ -1,3 +1,5 @@
+import outsideDropDown from './container-func';
+
 const elementDataAttribute = ({
   elementToGetAttribute,
   dataAttributeValue,
@@ -115,6 +117,8 @@ const dynamicClassToggler = ({
       secondLastElementInArray,
       elementToAddClassListValue,
     );
+
+    outsideDropDown(lastElemenInArray, classListValues);
   };
 
   return {
