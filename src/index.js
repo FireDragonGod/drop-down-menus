@@ -10,5 +10,6 @@ window.addEventListener('load', () => {
     subElement: 'div[data-nav-sub-item',
     classListValue: 'visible',
     togglerClassListValue: 'active-toggler',
+    closerToggler: 'div[id="main-container"]',
   }).dropDownElement();
 });
