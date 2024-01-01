@@ -1,4 +1,4 @@
-import outsideDropDown from './container-func';
+import outsideDropDown from './close-toggler';
 
 const elementDataAttribute = ({
   elementToGetAttribute,
@@ -53,6 +53,7 @@ const dynamicClassToggler = ({
   classListValues,
   elementToAddInArrays,
   elementsInArray,
+  closeToggler,
 }) => {
   const addElementInArray = () => elementsInArray.adder(elementToAddInArrays);
 
@@ -118,7 +119,7 @@ const dynamicClassToggler = ({
       elementToAddClassListValue,
     );
 
-    outsideDropDown(lastElemenInArray, classListValues);
+    outsideDropDown(lastElemenInArray, classListValues, closeToggler);
   };
 
   return {
@@ -135,6 +136,7 @@ const dropDown = ({
   subElement,
   classListValue,
   togglerClassListValue,
+  closerToggler,
 }) => {
   const dropDownElement = () => {
     elementToListen.forEach((element) => {
@@ -156,12 +158,14 @@ const dropDown = ({
           classListValues: classListValue,
           elementToAddInArrays: subNavItem,
           elementsInArray: subNavInArray,
+          closeToggler: closerToggler,
         }).toggleClass();
 
         dynamicClassToggler({
           classListValues: togglerClassListValue,
           elementToAddInArrays: element,
           elementsInArray: navBarTogglerInArray,
+          closeToggler: closerToggler,
         }).toggleClass();
       });
     });
